@@ -56,7 +56,7 @@ def get_lost_item(item_id: int, db: Session = Depends(get_db)):
     return item
 
 
-@app.put("/lost-items/{item_id}",
+@app.patch("/lost-items/{item_id}",
          response_model=schemas.LostItemResponse)
 def update_lost_item(
     item_id: int,
