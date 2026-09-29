@@ -102,3 +102,102 @@ def delete_lost_item(item_id: int, db: Session = Depends(get_db)):
     db.commit()
 
     return {"message": "Lost item deleted successfully"}
+
+
+
+@app.post(
+    "/found-items",
+    response_model=schemas.FoundItemResponse,
+    status_code=201
+)
+def create_found_item(
+    item: schemas.FoundItemCreate,
+    db: Session = Depends(get_db)
+):
+    new_item = models.FoundItem(**item.model_dump())
+
+    db.add(new_item)
+    db.commit()
+    db.refresh(new_item)
+
+    return new_item
+
+
+@app.get(
+    "/found-items",
+    response_model=list[schemas.FoundItemResponse]
+)
+def get_found_items(db: Session = Depends(get_db)):
+    return db.query(models.FoundItem).all()
+
+
+@app.get(
+    "/found-items/{item_id}",
+    response_model=schemas.FoundItemResponse
+)
+def get_found_item(
+    item_id: int,
+    db: Session = Depends(get_db)
+):
+    item = db.query(models.FoundItem).filter(
+        models.FoundItem.id == item_id
+    ).first()
+
+    if item is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Found item not found"
+        )
+
+    return item
+
+
+@app.patch(
+    "/found-items/{item_id}",
+    response_model=schemas.FoundItemResponse
+)
+def update_found_item(
+    item_id: int,
+    item_data: schemas.FoundItemUpdate,
+    db: Session = Depends(get_db)
+):
+    item = db.query(models.FoundItem).filter(
+        models.FoundItem.id == item_id
+    ).first()
+
+    if item is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Found item not found"
+        )
+
+    update_data = item_data.model_dump(exclude_unset=True)
+
+    for field, value in update_data.items():
+        setattr(item, field, value)
+
+    db.commit()
+    db.refresh(item)
+
+    return item
+
+
+@app.delete("/found-items/{item_id}")
+def delete_found_item(
+    item_id: int,
+    db: Session = Depends(get_db)
+):
+    item = db.query(models.FoundItem).filter(
+        models.FoundItem.id == item_id
+    ).first()
+
+    if item is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Found item not found"
+        )
+
+    db.delete(item)
+    db.commit()
+
+    return {"message": "Found item deleted successfully"}

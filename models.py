@@ -37,3 +37,37 @@ class LostItem(Base):
         Date,
         nullable=False
     )
+
+
+class FoundItem(Base):
+    __tablename__ = "found_items"
+
+    id: Mapped[int] = mapped_column(
+        primary_key=True,
+        index=True
+    )
+
+    item_name: Mapped[str] = mapped_column(
+        String(100),
+        nullable=False
+    )
+
+    description: Mapped[str] = mapped_column(
+        Text,
+        nullable=False
+    )
+
+    category: Mapped[str] = mapped_column(
+        String(50),
+        nullable=False
+    )
+
+    location: Mapped[str] = mapped_column(
+        String(150),
+        nullable=False
+    )
+
+    date_found: Mapped[date] = mapped_column(
+        Date,
+        nullable=False
+    )
