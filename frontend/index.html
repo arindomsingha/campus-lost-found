@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CampusLost AI</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>🎒 CampusLost AI</h1>
+    <p>Lost something? Found something? Let's reunite it with its owner.</p>
+  </header>
+
+  <main>
+    <section class="search-box">
+      <h2>Search Items</h2>
+
+      <form id="search-form">
+        <input id="keyword" placeholder="Search item name or description">
+
+        <select id="item-type">
+          <option value="all">Lost and Found</option>
+          <option value="lost">Lost Items</option>
+          <option value="found">Found Items</option>
+        </select>
+
+        <input id="search-category" placeholder="Category (optional)">
+        <input id="search-location" placeholder="Location (optional)">
+
+        <button type="submit">Search</button>
+      </form>
+
+      <div id="results">
+        <p>Search for an item to see reports here.</p>
+      </div>
+    </section>
+
+    <section class="forms">
+      <div class="form-card">
+        <h2>Report a Lost Item</h2>
+        <form id="lost-form">
+          <label for="lost-name">Item name</label>
+          <input id="lost-name" required placeholder="e.g. Blue water bottle">
+
+          <label for="lost-description">Description</label>
+          <textarea id="lost-description" required></textarea>
+
+          <label for="lost-category">Category</label>
+          <input id="lost-category" required placeholder="e.g. Bottle">
+
+          <label for="lost-location">Last seen location</label>
+          <input id="lost-location" required placeholder="e.g. Library">
+
+          <label for="date-lost">Date lost</label>
+          <input id="date-lost" type="date" required>
+
+          <button type="submit">Submit Lost Report</button>
+        </form>
+      </div>
+
+      <div class="form-card">
+        <h2>Report a Found Item</h2>
+        <form id="found-form">
+          <label for="found-name">Item name</label>
+          <input id="found-name" required placeholder="e.g. Black wallet">
+
+          <label for="found-description">Description</label>
+          <textarea id="found-description" required></textarea>
+
+          <label for="found-category">Category</label>
+          <input id="found-category" required placeholder="e.g. Wallet">
+
+          <label for="found-location">Found location</label>
+          <input id="found-location" required placeholder="e.g. Cafeteria">
+
+          <label for="date-found">Date found</label>
+          <input id="date-found" type="date" required>
+
+          <button type="submit">Submit Found Report</button>
+        </form>
+      </div>
+    </section>
+
+    <p id="message" role="status"></p>
+  </main>
+
+  <footer>
+    <p>CampusLost AI · Helping campus items find their way home</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
