@@ -1,5 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
+from sqlalchemy import or_
+from typing import Literal
 
 import models
 import schemas
@@ -201,3 +203,95 @@ def delete_found_item(
     db.commit()
 
     return {"message": "Found item deleted successfully"}
+
+@app.get("/search")
+def search_items(
+    keyword: str | None = None,
+    category: str | None = None,
+    location: str | None = None,
+    item_type: Literal["lost", "found", "all"] = "all",
+    db: Session = Depends(get_db)
+):
+    results = []
+
+    if item_type in ("lost", "all"):
+        query = db.query(models.LostItem)
+
+        if keyword:
+            query = query.filter(
+                or_(
+                    models.LostItem.item_name.ilike(
+                        f"%{keyword}%"
+                    ),
+                    models.LostItem.description.ilike(
+                        f"%{keyword}%"
+                    )
+                )
+            )
+
+        if category:
+            query = query.filter(
+                models.LostItem.category.ilike(
+                    f"%{category}%"
+                )
+            )
+
+        if location:
+            query = query.filter(
+                models.LostItem.location.ilike(
+                    f"%{location}%"
+                )
+            )
+
+        for item in query.all():
+            results.append({
+                "id": item.id,
+                "item_name": item.item_name,
+                "description": item.description,
+                "category": item.category,
+                "location": item.location,
+                "date": item.date_lost,
+                "item_type": "lost"
+            })
+
+    if item_type in ("found", "all"):
+        query = db.query(models.FoundItem)
+
+        if keyword:
+            query = query.filter(
+                or_(
+                    models.FoundItem.item_name.ilike(
+                        f"%{keyword}%"
+                    ),
+                    models.FoundItem.description.ilike(
+                        f"%{keyword}%"
+                    )
+                )
+            )
+
+        if category:
+            query = query.filter(
+                models.FoundItem.category.ilike(
+                    f"%{category}%"
+                )
+            )
+
+        if location:
+            query = query.filter(
+                models.FoundItem.location.ilike(
+                    f"%{location}%"
+                )
+            )
+
+        for item in query.all():
+            results.append({
+                "id": item.id,
+                "item_name": item.item_name,
+                "description": item.description,
+                "category": item.category,
+                "location": item.location,
+                "date": item.date_found,
+                "item_type": "found"
+            })
+
+    return results
