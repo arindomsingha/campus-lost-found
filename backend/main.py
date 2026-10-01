@@ -4,9 +4,9 @@ from sqlalchemy import or_
 from typing import Literal
 from fastapi.middleware.cors import CORSMiddleware
 
-import models
-import schemas
-from database import engine, get_db
+from . import models
+from . import schemas
+from .database import engine, get_db
 
 app = FastAPI(title="Campus Lost & Found API")
 

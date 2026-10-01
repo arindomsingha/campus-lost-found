@@ -2,7 +2,7 @@ from sqlalchemy import String, Text, Date
 from sqlalchemy.orm import Mapped, mapped_column
 from datetime import date
 
-from database import Base
+from .database import Base
 
 
 class LostItem(Base):
