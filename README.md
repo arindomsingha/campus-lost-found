@@ -23,18 +23,18 @@ category, and location.
 
 ## Tech Stack
 
-  Layer                       Technology
-  --------------------------- -----------------------
-  Frontend                    HTML, CSS, JavaScript
-  Backend                     Python, FastAPI
-  Validation                  Pydantic
-  ORM                         SQLAlchemy
-  Database                    PostgreSQL
-  API documentation/testing   Swagger UI
+| Technology     | Purpose                       |
+| -------------- | ----------------------------- |
+| Python         | Backend programming language  |
+| FastAPI        | REST API development          |
+| Pydantic       | Data validation               |
+| SQLAlchemy ORM | Database operations           |
+| PostgreSQL     | Relational database           |
+| Swagger UI     | API documentation and testing |
 
 ## Project Structure
 
-``` text
+```text
 CampusLostAI/
 ├── main.py
 ├── database.py
@@ -50,199 +50,169 @@ CampusLostAI/
 Your exact structure may differ slightly depending on how you organized
 the project.
 
-## Requirements
+## Installation and Setup
 
-Install the following before running the project:
+### 1. Clone the repository
 
--   Python 3.10 or newer
--   PostgreSQL
--   pip
--   A browser
+```bash
+git clone <your-repository-url>
+cd CampusLostAI
+```
 
-## Setup
+### 2. Create a virtual environment
 
-### 1. Clone or download the project
-
-Open a terminal in the project directory.
-
-### 2. Create and activate a virtual environment (recommended)
-
-``` bash
+```bash
 python -m venv .venv
 ```
 
-Windows PowerShell:
+Activate it on Windows:
 
-``` powershell
-.\.venv\Scripts\Activate.ps1
-```
-
-Windows Command Prompt:
-
-``` bat
+```bash
 .venv\Scripts\activate
 ```
 
-macOS/Linux:
+### 3. Install dependencies
 
-``` bash
-source .venv/bin/activate
-```
-
-### 3. Install Python dependencies
-
-Make sure `requirements.txt` includes the packages used by your backend.
-For example:
-
-``` text
-fastapi
-uvicorn[standard]
-sqlalchemy
-psycopg[binary]
-pydantic
-```
-
-Install them:
-
-``` bash
+```bash
 pip install -r requirements.txt
 ```
 
-### 4. Create the PostgreSQL database
+The main dependencies are:
 
-In pgAdmin or `psql`, run:
+* fastapi
+* uvicorn
+* sqlalchemy
+* psycopg[binary]
+* pydantic
 
-``` sql
+### 4. Set up PostgreSQL
+
+Create a database named:
+
+```sql
 CREATE DATABASE campus_lost_found;
 ```
 
-If the database already exists, do not create it again.
-
 ### 5. Configure the database connection
 
-In `database.py`, set `DATABASE_URL` to match your PostgreSQL username,
-password, host, port, and database name.
+Update the `DATABASE_URL` in `database.py` with your PostgreSQL credentials.
 
 Example:
 
-``` python
+```python
 DATABASE_URL = (
     "postgresql+psycopg://postgres:YOUR_PASSWORD"
     "@localhost:5432/campus_lost_found"
 )
 ```
 
-Replace `YOUR_PASSWORD` with your local PostgreSQL password. Do not
-commit real passwords or other secrets to a public repository. For a
-deployed application, load the connection string from an environment
-variable.
+Replace `YOUR_PASSWORD` with your PostgreSQL password.
 
 ### 6. Start the FastAPI backend
 
 From the project root, run:
 
-``` bash
+```bash
 uvicorn main:app --reload
 ```
 
 The backend should be available at:
 
--   API base: `http://127.0.0.1:8000`
--   Swagger UI: `http://127.0.0.1:8000/docs`
--   ReDoc: `http://127.0.0.1:8000/redoc`
+```text
+http://127.0.0.1:8000
+```
 
-The project uses SQLAlchemy's `Base.metadata.create_all()` to create
-tables that do not exist yet. It does **not** automatically migrate
-changes to existing tables; use Alembic for schema migrations as the
-project grows.
+### 7. API Documentation
 
-### 7. Start the frontend
+FastAPI automatically generates interactive API documentation.
+
+- **Swagger UI:** `http://127.0.0.1:8000/docs`
+- **ReDoc:** `http://127.0.0.1:8000/redoc`
+
+Use Swagger UI to test the API endpoints without needing a separate frontend.
+
+The project uses SQLAlchemy's `Base.metadata.create_all()` to create tables that do not exist yet. It does **not** automatically migrate changes to existing tables. Use Alembic for schema migrations as the project grows.
+
+### 8. Start the frontend
 
 Open a second terminal:
 
-``` bash
+```bash
 cd frontend
 python -m http.server 5500
 ```
 
 Then open:
 
-`http://localhost:5500`
+```text
+http://localhost:5500
+```
 
 Make sure the `API_URL` in `frontend/script.js` points to the backend:
 
-``` javascript
+```javascript
 const API_URL = "http://127.0.0.1:8000";
 ```
 
-### 8. Check CORS
+### 9. Check CORS
 
-If the browser reports a CORS error, make sure the FastAPI CORS
-configuration allows the frontend origin you are using, such as:
+If the browser reports a CORS error, make sure the FastAPI CORS configuration allows the frontend origin you are using:
 
-``` python
+```python
 allow_origins=[
     "http://localhost:5500",
     "http://127.0.0.1:5500",
 ]
 ```
 
-The origin must match the host and port in your browser.
+The origin must match the host and port used in your browser.
 
 ## API Endpoints
 
-### Lost items
+### Lost Items
 
-  Method     Endpoint                  Purpose
-  ---------- ------------------------- ----------------------------
-  `POST`     `/lost-items`             Create a lost-item report
-  `GET`      `/lost-items`             List all lost-item reports
-  `GET`      `/lost-items/{item_id}`   Get one lost-item report
-  `PATCH`    `/lost-items/{item_id}`   Update selected fields
-  `DELETE`   `/lost-items/{item_id}`   Delete a lost-item report
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/lost-items` | Create a lost-item report |
+| `GET` | `/lost-items` | Retrieve all lost items |
+| `GET` | `/lost-items/{item_id}` | Retrieve a lost item by ID |
+| `PATCH` | `/lost-items/{item_id}` | Update a lost-item report |
+| `DELETE` | `/lost-items/{item_id}` | Delete a lost-item report |
 
-### Found items
+### Found Items
 
-  Method     Endpoint                   Purpose
-  ---------- -------------------------- -----------------------------
-  `POST`     `/found-items`             Create a found-item report
-  `GET`      `/found-items`             List all found-item reports
-  `GET`      `/found-items/{item_id}`   Get one found-item report
-  `PATCH`    `/found-items/{item_id}`   Update selected fields
-  `DELETE`   `/found-items/{item_id}`   Delete a found-item report
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/found-items` | Create a found-item report |
+| `GET` | `/found-items` | Retrieve all found items |
+| `GET` | `/found-items/{item_id}` | Retrieve a found item by ID |
+| `PATCH` | `/found-items/{item_id}` | Update a found-item report |
+| `DELETE` | `/found-items/{item_id}` | Delete a found-item report |
 
 ### Search
 
-  Method   Endpoint    Purpose
-  -------- ----------- ----------------------------------
-  `GET`    `/search`   Search lost and/or found reports
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/search` | Search lost and found reports |
 
 Supported query parameters:
 
-  -----------------------------------------------------------------------
-  Parameter               Values / example        Purpose
-  ----------------------- ----------------------- -----------------------
-  `keyword`               `wallet`                Matches item name or
-                                                  description
-
-  `category`              `Electronics`           Filters by category
-
-  `location`              `Library`               Filters by location
-
-  `item_type`             `lost`, `found`, `all`  Selects which report
-                                                  types to search
-  -----------------------------------------------------------------------
+| Parameter | Values / Example | Purpose |
+|---|---|---|
+| `keyword` | `wallet` | Matches item name or description |
+| `category` | `Electronics` | Filters by category |
+| `location` | `Library` | Filters by location |
+| `item_type` | `lost`, `found`, `all` | Selects which report types to search |
 
 Examples:
 
-``` text
+```text
 GET /search?keyword=wallet&item_type=all
 GET /search?location=Library&item_type=found
 GET /search?category=Electronics&item_type=lost
 ```
 
-Search matching is based on the implementation in `main.py`; the current
-PostgreSQL search uses case-insensitive partial matching (`ILIKE`).
+Search matching is based on the implementation in `main.py`. The current PostgreSQL search uses case-insensitive partial matching (`ILIKE`).
 
 ## Example Requests
 
@@ -250,7 +220,7 @@ PostgreSQL search uses case-insensitive partial matching (`ILIKE`).
 
 `POST /lost-items`
 
-``` json
+```json
 {
   "item_name": "Identity Card (ID)",
   "description": "College ID card belonging to a student",
@@ -264,7 +234,7 @@ PostgreSQL search uses case-insensitive partial matching (`ILIKE`).
 
 `POST /found-items`
 
-``` json
+```json
 {
   "item_name": "Blue Water Bottle",
   "description": "Blue metal bottle with a black cap",
@@ -274,62 +244,35 @@ PostgreSQL search uses case-insensitive partial matching (`ILIKE`).
 }
 ```
 
-Use Swagger UI at `/docs` to try these requests.
-
 ## How It Works
 
-1.  A user submits a form or search from the frontend.
-2.  JavaScript uses `fetch()` to send an HTTP request to FastAPI.
-3.  FastAPI validates incoming data with Pydantic.
-4.  The endpoint uses SQLAlchemy ORM to query or update PostgreSQL.
-5.  FastAPI returns a JSON response.
-6.  JavaScript displays the response on the page.
+1. A client sends an HTTP request to a FastAPI endpoint.
+2. FastAPI receives and validates the request data using Pydantic.
+3. SQLAlchemy ORM performs the required database operation.
+4. PostgreSQL stores or retrieves the requested information.
+5. FastAPI returns the result as a JSON response.
 
-## Current Limitations
-
--   There is no user registration or login yet.
--   Reports are not yet tied to an authenticated owner.
--   Photo uploads are not implemented.
--   AI-based text/image matching is not implemented.
--   Notifications and item-collection tracking are not implemented.
--   Contact details and private messaging are not implemented.
--   The current CRUD endpoints should not be exposed publicly without
-    authentication and authorization.
-
-## Planned Improvements
-
-1.  Add user registration and secure password hashing.
-2.  Associate each report with its creator.
-3.  Add authorization so users can edit or delete only their own
-    reports.
-4.  Add image upload and safe image storage.
-5.  Add a contact-request flow that protects personal phone numbers.
-6.  Add rule-based matching, followed by text and image similarity.
-7.  Add notifications and item-return status.
-8.  Add database migrations with Alembic.
-9.  Add automated tests and deployment configuration.
-
-## Security Notes
-
--   Never publish database credentials, API secrets, or student phone
-    numbers in source control.
--   Before real campus use, add authentication, authorization, input
-    limits, upload validation, and appropriate privacy controls.
--   Do not rely on a possible match alone to prove ownership. Use a safe
-    item-claim verification process.
-
-## Learning Goals
+## Learning Objectives
 
 This project demonstrates:
 
--   REST API design with FastAPI
--   HTTP methods and endpoint routing
--   Pydantic request/response validation
--   SQLAlchemy ORM models and CRUD operations
--   PostgreSQL persistence
--   Frontend-to-backend communication with JavaScript `fetch()`
--   Basic search and filtering
+* Building REST APIs using FastAPI.
+* Understanding HTTP methods and API endpoints.
+* Validating data using Pydantic models.
+* Performing CRUD operations using SQLAlchemy ORM.
+* Connecting Python applications to PostgreSQL.
+* Implementing search and filtering functionality.
+* Testing APIs using Swagger UI.
+
+## Future Enhancements
+
+* User registration and authentication.
+* Image uploads for lost and found items.
+* AI-based matching of lost and found reports.
+* Contact details and secure communication between students.
+* Notifications when a potential match is found.
+* Item-claim verification and return tracking.
 
 ## License
 
-Add a license here if you plan to publish or distribute this project.
+This project was developed for educational purposes as a college project.
