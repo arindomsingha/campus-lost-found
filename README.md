@@ -1,4 +1,4 @@
-# CampusLost AI --- College Lost & Found
+# CampusLost --- College Lost & Found
 
 A full-stack college Lost & Found application where students can report
 lost items, report items they have found, and search reports by keyword,
