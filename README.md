@@ -1,22 +1,25 @@
-# CampusLost AI — College Lost & Found Backend
+# CampusLost AI --- College Lost & Found
 
-A simple backend for a college Lost & Found management system built using **Python, FastAPI, SQLAlchemy ORM, and PostgreSQL**.
+A full-stack college Lost & Found application where students can report
+lost items, report items they have found, and search reports by keyword,
+category, and location.
 
-The application allows students to report lost items, report found items, and search for items using keywords, categories, and locations.
+> **Current project scope:** The application currently includes a
+> FastAPI backend, PostgreSQL database access through SQLAlchemy ORM,
+> and a plain HTML/CSS/JavaScript frontend. Authentication, photo
+> uploads, AI-based matching, notifications, and private contact
+> workflows are future enhancements.
 
 ## Features
 
-* Report lost items with details such as name, description, category, location, and date lost.
-* Report found items with details such as name, description, category, location, and date found.
-* Retrieve all lost and found item reports.
-* Retrieve individual reports using their IDs.
-* Update existing reports.
-* Delete reports.
-* Search items by keyword, category, and location.
-* Filter search results by lost items, found items, or both.
-* Validate request data using Pydantic.
-* Store and manage data using PostgreSQL and SQLAlchemy ORM.
-* Test API endpoints using Swagger UI.
+-   Create, view, update, and delete lost-item reports.
+-   Create, view, update, and delete found-item reports.
+-   Search lost and found reports together or separately.
+-   Filter search results by keyword, category, and location.
+-   Validate API input with Pydantic schemas.
+-   Store reports in PostgreSQL using SQLAlchemy ORM.
+-   Explore and test endpoints through FastAPI Swagger UI.
+-   Use a responsive frontend built with HTML, CSS, and JavaScript.
 
 ## Tech Stack
 
@@ -37,8 +40,15 @@ CampusLostAI/
 ├── database.py
 ├── models.py
 ├── schemas.py
-└── requirements.txt
+├── requirements.txt
+└── frontend/
+    ├── index.html
+    ├── style.css
+    └── script.js
 ```
+
+Your exact structure may differ slightly depending on how you organized
+the project.
 
 ## Installation and Setup
 
@@ -98,91 +108,131 @@ DATABASE_URL = (
 
 Replace `YOUR_PASSWORD` with your PostgreSQL password.
 
-**Note:** Never upload your actual database password to a public repository.
+### 6. Start the FastAPI backend
 
-### 6. Run the application
-
-Start the FastAPI development server:
+From the project root, run:
 
 ```bash
 uvicorn main:app --reload
 ```
 
-The API will be available at:
+The backend should be available at:
 
 ```text
 http://127.0.0.1:8000
 ```
 
-## API Documentation
+### 7. API Documentation
 
 FastAPI automatically generates interactive API documentation.
 
-* **Swagger UI:** http://127.0.0.1:8000/docs
-* **ReDoc:** http://127.0.0.1:8000/redoc
+- **Swagger UI:** `http://127.0.0.1:8000/docs`
+- **ReDoc:** `http://127.0.0.1:8000/redoc`
 
-Use Swagger UI to test the endpoints without needing a separate frontend.
+Use Swagger UI to test the API endpoints without needing a separate frontend.
+
+The project uses SQLAlchemy's `Base.metadata.create_all()` to create tables that do not exist yet. It does **not** automatically migrate changes to existing tables. Use Alembic for schema migrations as the project grows.
+
+### 8. Start the frontend
+
+Open a second terminal:
+
+```bash
+cd frontend
+python -m http.server 5500
+```
+
+Then open:
+
+```text
+http://localhost:5500
+```
+
+Make sure the `API_URL` in `frontend/script.js` points to the backend:
+
+```javascript
+const API_URL = "http://127.0.0.1:8000";
+```
+
+### 9. Check CORS
+
+If the browser reports a CORS error, make sure the FastAPI CORS configuration allows the frontend origin you are using:
+
+```python
+allow_origins=[
+    "http://localhost:5500",
+    "http://127.0.0.1:5500",
+]
+```
+
+The origin must match the host and port used in your browser.
 
 ## API Endpoints
 
 ### Lost Items
 
-| Method | Endpoint                | Description                |
-| ------ | ----------------------- | -------------------------- |
-| POST   | `/lost-items`           | Create a lost-item report  |
-| GET    | `/lost-items`           | Retrieve all lost items    |
-| GET    | `/lost-items/{item_id}` | Retrieve a lost item by ID |
-| PATCH  | `/lost-items/{item_id}` | Update a lost-item report  |
-| DELETE | `/lost-items/{item_id}` | Delete a lost-item report  |
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/lost-items` | Create a lost-item report |
+| `GET` | `/lost-items` | Retrieve all lost items |
+| `GET` | `/lost-items/{item_id}` | Retrieve a lost item by ID |
+| `PATCH` | `/lost-items/{item_id}` | Update a lost-item report |
+| `DELETE` | `/lost-items/{item_id}` | Delete a lost-item report |
 
 ### Found Items
 
-| Method | Endpoint                 | Description                 |
-| ------ | ------------------------ | --------------------------- |
-| POST   | `/found-items`           | Create a found-item report  |
-| GET    | `/found-items`           | Retrieve all found items    |
-| GET    | `/found-items/{item_id}` | Retrieve a found item by ID |
-| PATCH  | `/found-items/{item_id}` | Update a found-item report  |
-| DELETE | `/found-items/{item_id}` | Delete a found-item report  |
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/found-items` | Create a found-item report |
+| `GET` | `/found-items` | Retrieve all found items |
+| `GET` | `/found-items/{item_id}` | Retrieve a found item by ID |
+| `PATCH` | `/found-items/{item_id}` | Update a found-item report |
+| `DELETE` | `/found-items/{item_id}` | Delete a found-item report |
 
 ### Search
 
-| Method | Endpoint  | Description                   |
-| ------ | --------- | ----------------------------- |
-| GET    | `/search` | Search lost and found reports |
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/search` | Search lost and found reports |
 
 Supported query parameters:
 
-| Parameter   | Description                         |
-| ----------- | ----------------------------------- |
-| `keyword`   | Search item names and descriptions  |
-| `category`  | Filter by item category             |
-| `location`  | Filter by location                  |
-| `item_type` | Filter by `lost`, `found`, or `all` |
+| Parameter | Values / Example | Purpose |
+|---|---|---|
+| `keyword` | `wallet` | Matches item name or description |
+| `category` | `Electronics` | Filters by category |
+| `location` | `Library` | Filters by location |
+| `item_type` | `lost`, `found`, `all` | Selects which report types to search |
 
-Example requests:
+Examples:
 
 ```text
-/search?keyword=wallet&item_type=all
-/search?location=Library&item_type=found
-/search?category=Electronics&item_type=lost
+GET /search?keyword=wallet&item_type=all
+GET /search?location=Library&item_type=found
+GET /search?category=Electronics&item_type=lost
 ```
 
-## Example Request
+Search matching is based on the implementation in `main.py`. The current PostgreSQL search uses case-insensitive partial matching (`ILIKE`).
 
-Create a lost-item report using `POST /lost-items`:
+## Example Requests
+
+### Create a lost-item report
+
+`POST /lost-items`
 
 ```json
 {
   "item_name": "Identity Card (ID)",
-  "description": "ID card of a student",
+  "description": "College ID card belonging to a student",
   "category": "Accessories",
   "location": "Academic Block",
   "date_lost": "2026-09-26"
 }
 ```
 
-Create a found-item report using `POST /found-items`:
+### Create a found-item report
+
+`POST /found-items`
 
 ```json
 {
