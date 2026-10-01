@@ -36,15 +36,19 @@ category, and location.
 
 ```text
 CampusLostAI/
-├── main.py
-├── database.py
-├── models.py
-├── schemas.py
-├── requirements.txt
-└── frontend/
-    ├── index.html
-    ├── style.css
-    └── script.js
+│
+├── backend/
+│   ├── main.py
+│   ├── database.py
+│   ├── models.py
+│   └── schemas.py
+│
+├── frontend/
+│   ├── index.html
+│   ├── style.css
+│   └── script.js
+│
+└── requirements.txt
 ```
 
 Your exact structure may differ slightly depending on how you organized
@@ -113,7 +117,7 @@ Replace `YOUR_PASSWORD` with your PostgreSQL password.
 From the project root, run:
 
 ```bash
-uvicorn main:app --reload
+uvicorn backend.main:app --reload
 ```
 
 The backend should be available at:
